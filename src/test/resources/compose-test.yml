@@ -1,0 +1,10 @@
+version: "3.8"
+services:
+  authdbfortests:
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: mrktresearch
+      POSTGRES_USER: mcadmin
+      POSTGRES_PASSWORD: mcadmin

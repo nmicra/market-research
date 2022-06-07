@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="add_sequence" author="nmicra">
+        <createSequence sequenceName="SEQ_ORDERS" cycle="false" minValue="1" maxValue="9223372036854775807" startValue="1" incrementBy="1"/>
+    </changeSet>
+
+    <changeSet id="general_statistics_entity" author="nmicra">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="general_statistics"/>
+            </not>
+        </preConditions>
+        <createTable tableName="general_statistics">
+            <column name="id" type="bigint" defaultValueComputed="nextval('seq_orders')">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="key" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="label" type="VARCHAR(12)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" type="jsonb"/>
+        </createTable>
+    </changeSet>
+
+
+    <changeSet id="market_raw_entity" author="nmicra">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="market_raw"/>
+            </not>
+        </preConditions>
+        <createTable tableName="market_raw">
+
+            <column name="id" type="bigint" defaultValueComputed="nextval('seq_orders')">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="label" type="VARCHAR(12)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="open" type="double"/>
+            <column name="high" type="double"/>
+            <column name="low" type="double"/>
+            <column name="close" type="double"/>
+            <column name="volume" type="bigint"/>
+        </createTable>
+        <createIndex indexName="idx_raw_path" tableName="market_raw">
+            <column name="label"/>
+            <column name="date"/>
+        </createIndex>
+    </changeSet>
+
+
+    <changeSet id="market_daily_entity" author="nmicra">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="market_daily"/>
+            </not>
+        </preConditions>
+        <createTable tableName="market_daily">
+
+            <column name="id" type="bigint" defaultValueComputed="nextval('seq_orders')">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="date" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="open" type="double"/>
+            <column name="high" type="double"/>
+            <column name="low" type="double"/>
+            <column name="close" type="double"/>
+            <column name="volume" type="int"/>
+
+            <column name="delta" type="double"/>
+            <column name="intraVolatility" type="double"/>
+            <column name="scaledVolume" type="double"/>
+            <column name="scaledTrend" type="double"/>
+            <column name="trend" type="double"/>
+            <column name="momentum" type="double"/>
+            <column name="stochastic" type="double"/>
+
+            <column name="bullishIndicators" type="varchar(200) []" />
+            <column name="bearishIndicators" type="varchar(200) []" />
+            <column name="neutralIndicators" type="varchar(200) []" />
+            <column name="additional_data" type="jsonb"/>
+        </createTable>
+
+    </changeSet>
+
+
+    <changeSet id="market_weekly_entity" author="nmicra">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="market_weekly"/>
+            </not>
+        </preConditions>
+        <createTable tableName="market_weekly">
+
+            <column name="id" type="bigint" defaultValueComputed="nextval('seq_orders')">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="date" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="weekNr" type="int"/>
+            <column name="year" type="int"/>
+
+            <column name="open" type="double"/>
+            <column name="high" type="double"/>
+            <column name="low" type="double"/>
+            <column name="close" type="double"/>
+            <column name="volume" type="int"/>
+
+            <column name="delta" type="double"/>
+            <column name="intraVolatility" type="double"/>
+            <column name="scaledVolume" type="double"/>
+            <column name="scaledTrend" type="double"/>
+            <column name="trend" type="double"/>
+            <column name="momentum" type="double"/>
+            <column name="stochastic" type="double"/>
+
+            <column name="bullishIndicators" type="varchar(200) []" />
+            <column name="bearishIndicators" type="varchar(200) []" />
+            <column name="neutralIndicators" type="varchar(200) []" />
+            <column name="additional_data" type="jsonb"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="market_monthly_entity" author="nmicra">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="market_monthly"/>
+            </not>
+        </preConditions>
+        <createTable tableName="market_monthly">
+
+            <column name="id" type="bigint" defaultValueComputed="nextval('seq_orders')">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="date" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="monthNr" type="int"/>
+            <column name="year" type="int"/>
+
+            <column name="open" type="double"/>
+            <column name="high" type="double"/>
+            <column name="low" type="double"/>
+            <column name="close" type="double"/>
+            <column name="volume" type="int"/>
+
+            <column name="delta" type="double"/>
+            <column name="intraVolatility" type="double"/>
+            <column name="scaledVolume" type="double"/>
+            <column name="scaledTrend" type="double"/>
+            <column name="trend" type="double"/>
+            <column name="momentum" type="double"/>
+            <column name="stochastic" type="double"/>
+
+            <column name="bullishIndicators" type="varchar(200) []" />
+            <column name="bearishIndicators" type="varchar(200) []" />
+            <column name="neutralIndicators" type="varchar(200) []" />
+            <column name="additional_data" type="jsonb"/>
+        </createTable>
+    </changeSet>
+
+
+    <changeSet id="market_daily_prediction_entity" author="nmicra">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="market_daily_prediction"/>
+            </not>
+        </preConditions>
+        <createTable tableName="market_daily_prediction">
+
+            <column name="id" type="bigint" defaultValueComputed="nextval('seq_orders')">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="predicted_at" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="open" type="double"/>
+            <column name="high" type="double"/>
+            <column name="low" type="double"/>
+            <column name="close" type="double"/>
+            <column name="volume" type="int"/>
+
+            <column name="prediction_model" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

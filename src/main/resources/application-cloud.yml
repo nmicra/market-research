@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: market-research
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:postgresql://us-west1.yougabyteBlaBlaserver.gcp.ybdb.io:5433/yugabyte?ssl=true&sslmode=verify-full&sslrootcert=//tmp//crert//yugabyte-ca.crt
+    username: admin
+    password: mylong1234567890password
+  r2dbc:
+    url: r2dbc:postgresql://us-west1.yougabyteBlaBlaserver.gcp.ybdb.io:5433/yugabyte?ssl=true
+    username: admin
+    password: mylong1234567890password
+    properties.sslMode: verify-full
+    properties.sslRootCert: //tmp//crert//yugabyte-ca.crt
+    pool:
+      name: MRKT-RSH-POOL
+      initial-size: 10
+      max-size: 50
+  liquibase:
+    url: jdbc:postgresql://us-west1.yougabyteBlaBlaserver.gcp.ybdb.io:5433/yugabyte?ssl=true&sslmode=verify-full&sslrootcert=//tmp//crert//yugabyte-ca.crt
+    user: admin
+    password: mylong1234567890password
+    change-log: classpath:/db/changelog/master.xml
+    enabled: ${LIQUIBASE_ENABLED:true}
+
+logging:
+  level:
+    com.github.nmicra: ${LOGGING_LEVEL:DEBUG}
+    io.r2dbc.postgresql.QUERY: DEBUG # for queries
+    io.r2dbc.postgresql.PARAM: DEBUG # for parameters
+
+server:
+  port: 8383
+
