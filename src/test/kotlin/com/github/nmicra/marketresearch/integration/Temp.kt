@@ -58,7 +58,91 @@ class Temp {
             .toListOf<Day>()
         println(">>> ${df[0]}")
     }
+
+
+    @Test
+    fun test4(){
+        /*
+HH -> HH
+HH -> LH
+LH -> LL
+LH -> HL
+LL -> LL
+LL -> HL
+HL -> HH
+HL -> LH
+         */
+        // Int in criticals is the DISTANCE to previous critical
+       val criticals  = mutableListOf(TradingHHLLClassification(3.5,0,HHLLClassification.HH), TradingHHLLClassification(2.3,1,HHLLClassification.HL))
+
+        val lst = listOf<Double>(3.5,2.3,3.4,3.3,3.6,3.4,3.3,5.1,4.3,4.5,3.3,3.0,3.12,3.15,3.1,2.9,2.8,2.7).map { it.toHHLL() }
+        for ((ind,trading) in lst.drop(2).withIndex() ){
+//            println("ind=$ind trd=$trading")
+            when(criticals.last().hhll){
+                HHLLClassification.HL -> {
+                    if (trading.close < criticals.last().close){
+                        criticals.add(trading.copy(hhll = HHLLClassification.LL, index = ind+2/* drop 2 in the loop*/))
+                    } else if(trading.close > criticals[criticals.lastIndex-1].close) {
+                        criticals.add(trading.copy(hhll = HHLLClassification.LH, index = ind+2/* drop 2 in the loop*/))
+                    }
+                }
+                HHLLClassification.LH -> {
+                    if (trading.close > criticals.last().close){
+                        criticals.add(trading.copy(hhll = HHLLClassification.HH, index = ind+2/* drop 2 in the loop*/))
+                    } else if(trading.close < criticals[criticals.lastIndex-1].close) {
+                        criticals.add(trading.copy(hhll = HHLLClassification.HL, index = ind+2/* drop 2 in the loop*/))
+                    }
+                }
+                HHLLClassification.LL -> {
+                    if (trading.close < criticals.last().close){
+                        criticals.add(trading.copy(hhll = HHLLClassification.LL, index = ind+2/* drop 2 in the loop*/))
+                    } else if(trading.close > criticals[criticals.lastIndex-1].close) {
+                        criticals.add(trading.copy(hhll = HHLLClassification.LH, index = ind+2/* drop 2 in the loop*/))
+                    }
+                }
+                HHLLClassification.HH -> {
+                    if (trading.close > criticals.last().close){
+                        criticals.add(trading.copy(hhll = HHLLClassification.HH, index = ind+2/* drop 2 in the loop*/))
+                    } else if(trading.close < criticals[criticals.lastIndex-1].close) {
+                        criticals.add(trading.copy(hhll = HHLLClassification.HL, index = ind+2/* drop 2 in the loop*/))
+                    }
+                }
+                else -> error("not supported state $trading")
+            }
+        }
+        criticals.subList(0,3).map { it.hhll }
+
+        println("criticals are: $criticals")
+        println("first index contains all: ${firstIndexContainsAllHHLLs(criticals)}")
+    }
+
+
+    fun Double.toHHLL() : TradingHHLLClassification = TradingHHLLClassification(this)
+
+    // returns first index, which contains all HH,HL,LL,LH
+
+      fun firstIndexContainsAllHHLLs(criticalsLst: List<TradingHHLLClassification>): Int{
+//    fun firstIndexContainsAllHHLLs(criticalsLst : List<HHLLClassification>) : Int {
+        check(criticalsLst.size >= 4) {"list is too short to contain all HH,HL,LL,LH values"}
+        val criticlasMapped =  criticalsLst.map { it.hhll }
+        var ind = 3
+        while (ind < criticlasMapped.size) {
+            if (criticlasMapped.subList(0,ind).containsAll(listOf(
+                    HHLLClassification.HH,
+                    HHLLClassification.HL, HHLLClassification.LL, HHLLClassification.LH))){
+//                return criticalsLst.subList(0,ind).map { it.index }.sum()
+                return criticalsLst[ind].index
+            }
+            ind++
+        }
+        error("index not found")
+    }
 }
+//TODO move over list, make csv currentStatus(NONE,LL,LH), numPrevLL,numPrevHH,numPrevHL,numPrevLH, Y=>nextLLorHH
+//TODO move over list, make csv currentStatus(NONE,LL,LH), numPrevLL,numPrevHH,numPrevHL,numPrevLH, nextLLorHH, Y=>distanceTo
+enum class HHLLClassification{HH,HL,LL,LH,NONE}
+data class TradingHHLLClassification(val close : Double, var index : Int = -1, var hhll : HHLLClassification = HHLLClassification.NONE)
+
 
 data class Day(
     @ColumnName("Date") val date: LocalDate,

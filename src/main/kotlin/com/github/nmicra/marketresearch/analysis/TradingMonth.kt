@@ -22,6 +22,5 @@ data class TradingMonth(val tradingDayList: List<TradingDay>) : TradingPeriod() 
         get() = tradingDayList.last().close
     override val volume: Long
         get() = tradingDayList.sumOf { it.volume }
-    val year by lazy { startingDate.year }
-    val month by lazy { startingDate.monthNumber }
+
 }

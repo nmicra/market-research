@@ -14,6 +14,4 @@ data class TradingDay(
     @Serializable(with = BigDecimalSerializer::class) override val low: BigDecimal,
     @Serializable(with = BigDecimalSerializer::class) override val close: BigDecimal,
     override val volume: Long = 0
-) : TradingPeriod() {
-    val weekNr by lazy { weekNumForDate(startingDate) }
-}
+) : TradingPeriod()

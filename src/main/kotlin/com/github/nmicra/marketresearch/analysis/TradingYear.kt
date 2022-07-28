@@ -22,5 +22,4 @@ data class TradingYear(val tradingDayList: List<TradingDay>) : TradingPeriod() {
         get() = tradingDayList.last().close
     override val volume: Long
         get() = tradingDayList.sumOf { it.volume }
-    val year by lazy { startingDate.year }
 }

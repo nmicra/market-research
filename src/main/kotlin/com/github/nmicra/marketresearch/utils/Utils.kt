@@ -7,10 +7,12 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import com.github.nmicra.marketresearch.analysis.Indicator
+import com.github.nmicra.marketresearch.analysis.TradingPeriod
+import com.github.nmicra.marketresearch.general.BIGDECIMAL_SCALE
+import java.math.BigDecimal
 import java.math.MathContext
-
-
-
+import java.math.RoundingMode
 
 
 val objectMapper by lazy {
@@ -27,3 +29,9 @@ inline fun <reified T> jacksonTypeRef(): TypeReference<T> = object : TypeReferen
 inline fun <reified T> ObjectMapper.readValue(jp: JsonParser): T = readValue(jp, jacksonTypeRef<T>())
 inline fun <reified T> ObjectMapper.readValue(jp: String): T = readValue(jp, jacksonTypeRef<T>())
 inline fun ObjectMapper.transformToJsonNode(str: String): JsonNode = objectMapper.readTree(objectMapper.factory.createParser(str))
+
+val listOfBullishReversals = listOf(Indicator.BullishOutsideReversal, Indicator.BearishCandle, Indicator.EveningStarBullishReversal)
+val listOfBearishReversals = listOf(Indicator.BearishOutsideReversal, Indicator.BullishCandle, Indicator.EveningStarBearishReversal)
+
+fun BigDecimal.plusOnePercent() : BigDecimal = this.divide(BigDecimal(100), BIGDECIMAL_SCALE, RoundingMode.HALF_UP).plus(this)
+fun BigDecimal.minusOnePercent() : BigDecimal = this.minus(this.divide(BigDecimal(100), BIGDECIMAL_SCALE, RoundingMode.HALF_UP))

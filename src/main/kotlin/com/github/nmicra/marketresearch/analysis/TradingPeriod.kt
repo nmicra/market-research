@@ -27,6 +27,10 @@ sealed class TradingPeriod : java.io.Serializable {
     @Serializable(with = BigDecimalSerializer::class)
     lateinit var scaledTrend : BigDecimal
 
+    val year by lazy { startingDate.year }
+    val month by lazy { startingDate.monthNumber }
+    val weekNr by lazy { weekNumForDate(startingDate) }
+
     /**
      * trend is calculated with VPT formula
      * VPT = Previous VPT + Volume x (Today’s Closing Price – Previous Closing Price) / Previous Closing Price
@@ -47,6 +51,10 @@ sealed class TradingPeriod : java.io.Serializable {
     @Serializable(with = BigDecimalSerializer::class)
     lateinit var stochastic : BigDecimal
 
+    var bearishElectedFlag = false
+    var bullishElectedFlag = false
+    val bearishReversals : MutableList<BigDecimal> = mutableListOf()
+    val bullishReversals : MutableList<BigDecimal> = mutableListOf()
     val tradingLabelsList : MutableSet<@Serializable(with = IndicatorsSerializer::class) Indicator> = mutableSetOf()
     val intraVolatility by lazy { high - low }
     val isHighClose by lazy { close > (high - low).multiply(BigDecimal(0.75)) + low }

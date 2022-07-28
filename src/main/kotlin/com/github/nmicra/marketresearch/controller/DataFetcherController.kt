@@ -19,7 +19,7 @@ class DataFetcherController {
      */
     @GetMapping("/raw/setup/{label}")
     fun rawSetup(@PathVariable label : String) : String {
-        marketRawDataService.setupNewMarketRawData2(label)
+        marketRawDataService.setupNewMarketRawData(label)
         return "done ${System.currentTimeMillis()}"
     }
 

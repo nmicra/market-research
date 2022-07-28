@@ -25,7 +25,7 @@ class MarketRawDataService {
 
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    fun setupNewMarketRawData2(label : String){
+    fun setupNewMarketRawData(label : String){
         runBlocking {
             yahooRawDataService.tradingDataForPeriod(label, LocalDate.of(1970,1,1), LocalDate.now())
                 .asFlow()
@@ -34,38 +34,6 @@ class MarketRawDataService {
         }
     }
 
-//    fun setupNewMarketRawData(label : String){
-//        val stock = YahooFinance.get(label)
-//        val from = Calendar.getInstance().also { it.add(Calendar.YEAR, -50) }
-//        val to = Calendar.getInstance()
-//       /*stock.getHistory(from, to, Interval.DAILY)
-//            .forEach {
-//                val raw1 = MarketRaw(label = label,
-//                    date = LocalDate.ofInstant(it.date.toInstant(), ZoneId.systemDefault()),
-//                    open = it.open.toDouble(),
-//                    high = it.high.toDouble(),
-//                    low = it.low.toDouble(),
-//                    close = it.close.toDouble(),
-//                    volume = it.volume
-//                )
-//                runBlocking { marketRawDataRepository.save(raw1) }
-//                println(">>> ${it}")
-//            }*/
-//        runBlocking {
-//            stock.getHistory(from, to, Interval.DAILY)
-//                .asFlow().onEach {
-//                    val raw1 = MarketRaw(label = label,
-//                        date = LocalDate.ofInstant(it.date.toInstant(), ZoneId.systemDefault()),
-//                        open = it.open.toDouble(),
-//                        high = it.high.toDouble(),
-//                        low = it.low.toDouble(),
-//                        close = it.close.toDouble(),
-//                        volume = it.volume
-//                    )
-//                    marketRawDataRepository.save(raw1)
-//                }.collect()
-//        }
-//    }
 
     fun updateRawData(label : String) {
         runBlocking {

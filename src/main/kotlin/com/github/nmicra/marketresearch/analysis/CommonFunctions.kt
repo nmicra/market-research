@@ -1,6 +1,10 @@
 package com.github.nmicra.marketresearch.analysis
 
 import com.github.nmicra.marketresearch.general.BIGDECIMAL_SCALE
+import com.github.nmicra.marketresearch.utils.listOfBearishReversals
+import com.github.nmicra.marketresearch.utils.listOfBullishReversals
+import com.github.nmicra.marketresearch.utils.minusOnePercent
+import com.github.nmicra.marketresearch.utils.plusOnePercent
 import kotlinx.datetime.*
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -314,6 +318,35 @@ fun List<TradingPeriod>.identifyCandlePattern(){
             // Turning from bearish to bullish
             this[i].tradingLabelsList.add(Indicator.BearishCandle)
         }
+    }
+}
+
+fun List<TradingPeriod>.identifyReversals(){
+    val localBearishReversals : MutableList<BigDecimal> = mutableListOf()
+    val localBullishReversals : MutableList<BigDecimal> = mutableListOf()
+
+    for (i in 1..this.lastIndex){
+        val potentialBullishReversalPont = listOfBullishReversals.intersect(this[i].tradingLabelsList).size
+        val potentialBearishReversalPont = listOfBearishReversals.intersect(this[i].tradingLabelsList).size
+        when {
+            potentialBullishReversalPont > potentialBearishReversalPont -> localBullishReversals.add(this[i].close)
+            potentialBullishReversalPont < potentialBearishReversalPont -> localBearishReversals.add(this[i].close)
+            else -> println(">>> Both bullish & bearish signal, do nothing")
+        }
+
+        if (localBullishReversals.map { it.plusOnePercent() }.any { it < this[i].close }){
+            this[i].bullishElectedFlag = true
+            localBullishReversals.removeIf { it.plusOnePercent() < this[i].close}
+        }
+        if (localBearishReversals.map { it.minusOnePercent() }.any { it > this[i].close }){
+            this[i].bearishElectedFlag = true
+            localBearishReversals.removeIf { it.minusOnePercent() > this[i].close}
+        }
+
+        localBullishReversals.sorted()
+        localBearishReversals.sortDescending()
+        this[i].bearishReversals.addAll(localBearishReversals)
+        this[i].bullishReversals.addAll(localBullishReversals)
     }
 }
 

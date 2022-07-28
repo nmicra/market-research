@@ -3,23 +3,23 @@ spring:
     name: market-research
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:postgresql://us-west1.yougabyteBlaBlaserver.gcp.ybdb.io:5433/yugabyte?ssl=true&sslmode=verify-full&sslrootcert=//tmp//crert//yugabyte-ca.crt
+    url: jdbc:postgresql://us-west1.ec90e29a-5a4a-48fd-a976-b97c4dead805.gcp.ybdb.io:5433/yugabyte?ssl=true&sslmode=verify-full&sslrootcert=C://gld//yugabyte-ca.crt
     username: admin
-    password: mylong1234567890password
+    password: d6Ja4kbdyOX7MdAmd1A21OM03L_2De
   r2dbc:
-    url: r2dbc:postgresql://us-west1.yougabyteBlaBlaserver.gcp.ybdb.io:5433/yugabyte?ssl=true
+    url: r2dbc:postgresql://us-west1.ec90e29a-5a4a-48fd-a976-b97c4dead805.gcp.ybdb.io:5433/yugabyte?ssl=true
     username: admin
-    password: mylong1234567890password
+    password: d6Ja4kbdyOX7MdAmd1A21OM03L_2De
     properties.sslMode: verify-full
-    properties.sslRootCert: //tmp//crert//yugabyte-ca.crt
+    properties.sslRootCert: C://gld//yugabyte-ca.crt
     pool:
       name: MRKT-RSH-POOL
       initial-size: 10
       max-size: 50
   liquibase:
-    url: jdbc:postgresql://us-west1.yougabyteBlaBlaserver.gcp.ybdb.io:5433/yugabyte?ssl=true&sslmode=verify-full&sslrootcert=//tmp//crert//yugabyte-ca.crt
+    url: jdbc:postgresql://us-west1.ec90e29a-5a4a-48fd-a976-b97c4dead805.gcp.ybdb.io:5433/yugabyte?ssl=true&sslmode=verify-full&sslrootcert=C://gld//yugabyte-ca.crt
     user: admin
-    password: mylong1234567890password
+    password: d6Ja4kbdyOX7MdAmd1A21OM03L_2De
     change-log: classpath:/db/changelog/master.xml
     enabled: ${LIQUIBASE_ENABLED:true}
 
