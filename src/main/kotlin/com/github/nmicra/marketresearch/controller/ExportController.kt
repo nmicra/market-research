@@ -3,6 +3,7 @@ package com.github.nmicra.marketresearch.controller
 import com.github.nmicra.marketresearch.analysis.*
 import com.github.nmicra.marketresearch.entity.toTradingDay
 import com.github.nmicra.marketresearch.repository.MarketRawDataRepository
+import com.github.nmicra.marketresearch.service.TradingPeriodService
 import com.github.nmicra.marketresearch.service.report.LLHHReportService
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.runBlocking
@@ -25,6 +26,9 @@ class ExportController {
 
     @Autowired
     lateinit var LLHHReportService: LLHHReportService
+
+    @Autowired
+    lateinit var tradingPeriodService : TradingPeriodService
 
     /**
      * exports raw data to csv file
@@ -56,36 +60,14 @@ class ExportController {
             .body(stream)
     }
 
-    // "$currentIndexClassification,$distanceToHH,$distanceToLL,$distanceToLH,$distanceToHL,$nextLLHH,$nextLLHHClassification,$nextLLHHDistance")
+
     @GetMapping("/export/reversals/{label}/{interval}")
     suspend fun exportReversalsToCsv(
         @PathVariable label: String,
         @PathVariable interval: String
     ): ResponseEntity<StreamingResponseBody> {
-        println(">>> $interval")
-        //TODO support interval: daily,weekly,monthly
-        val tradingData = when (interval) {
-            "daily" -> marketRawDataRepository.findAllByLabel(label)
-                .map { it.toTradingDay() }
-                .toList()
-                .sortedBy { it.startingDate }
-            "weekly" -> marketRawDataRepository.findAllByLabel(label)
-                .map { it.toTradingDay() }
-                .toList()
-                .sortedBy { it.startingDate }
-                .toTradingWeeks()
-            "monthly" -> marketRawDataRepository.findAllByLabel(label)
-                .map { it.toTradingDay() }
-                .toList()
-                .sortedBy { it.startingDate }
-                .toTradingMonth()
-            "yearly" -> marketRawDataRepository.findAllByLabel(label)
-                .map { it.toTradingDay() }
-                .toList()
-                .sortedBy { it.startingDate }
-                .toTradingYear()
-            else -> error("the provided interval [$interval] is not supported, use one of: daily,weekly,monthly,yearly")
-        }
+
+        val tradingData = runBlocking { tradingPeriodService.tradingPeriodByInterval(interval, label) }
 
         tradingData.calculateDelta()
         tradingData.scaleVolume()
@@ -152,30 +134,10 @@ class ExportController {
         @PathVariable interval: String
     ): ResponseEntity<StreamingResponseBody> {
 
-        val tradingData = when (interval) {
-            "daily" -> marketRawDataRepository.findAllByLabel(label)
-                .map { it.toTradingDay() }
-                .toList()
-                .sortedBy { it.startingDate }
-            "weekly" -> marketRawDataRepository.findAllByLabel(label)
-                .map { it.toTradingDay() }
-                .toList()
-                .sortedBy { it.startingDate }
-                .toTradingWeeks()
-            "monthly" -> marketRawDataRepository.findAllByLabel(label)
-                .map { it.toTradingDay() }
-                .toList()
-                .sortedBy { it.startingDate }
-                .toTradingMonth()
-            "yearly" -> marketRawDataRepository.findAllByLabel(label)
-                .map { it.toTradingDay() }
-                .toList()
-                .sortedBy { it.startingDate }
-                .toTradingYear()
-            else -> error("the provided interval [$interval] is not supported, use one of: daily,weekly,monthly,yearly")
-        }
+        val tradingData = runBlocking { tradingPeriodService.tradingPeriodByInterval(interval, label) }
 
-        val report = LLHHReportService.createLLHHReport(tradingData)
+//        val report = LLHHReportService.createLLHHReport(tradingData)
+        val report = LLHHReportService.createLLHHReportWithMV(tradingData)
 
         val header = HttpHeaders().also {
             it.add(
@@ -193,7 +155,7 @@ class ExportController {
                 report.asFlow()
                     .onStart {
                         val csvHeader =
-                            "date,currentIndexClassification,distanceToHH,distanceToLL,distanceToLH,distanceToHL,nextLLHH,nextLLHHDistance\n"
+                            "date,close,mv5Dev,mv7Dev,currentIndexClassification,distanceToHH,distanceToLL,distanceToLH,distanceToHL,nextLLHH,nextLLHHDistance\n"
                         IOUtils.copy(csvHeader.byteInputStream(), out)
                     }
                     .map {

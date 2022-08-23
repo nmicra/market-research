@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: market-research
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB_NAME:mrktresearch}
+    username: ${POSTGRES_USER:mcadmin}
+    password: ${POSTGRES_PASS:mcadmin}
+  r2dbc:
+    url: r2dbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB_NAME:mrktresearch}
+    username: ${POSTGRES_USER:mcadmin}
+    password: ${POSTGRES_PASS:mcadmin}
+    pool:
+      name: MRKT-RSH-POOL
+      initial-size: 10
+      max-size: 50
+
+logging:
+  level:
+    com.github.nmicra: ${LOGGING_LEVEL:DEBUG}
+    io.r2dbc.postgresql.QUERY: DEBUG # for queries
+    io.r2dbc.postgresql.PARAM: DEBUG # for parameters
+
+server:
+  port: 8383
+

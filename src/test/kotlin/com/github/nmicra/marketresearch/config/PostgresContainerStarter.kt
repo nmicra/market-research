@@ -7,8 +7,8 @@ import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.test.context.ContextConfiguration
 import org.testcontainers.containers.PostgreSQLContainer
 
-@ContextConfiguration(initializers = [PostgresContainerStarter.Initializer::class])
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+//@ContextConfiguration(initializers = [PostgresContainerStarter.Initializer::class])
+//@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 open class PostgresContainerStarter {
 
     companion object {

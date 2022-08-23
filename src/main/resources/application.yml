@@ -23,10 +23,11 @@ spring:
 
 logging:
   level:
-    com.github.nmicra: ${LOGGING_LEVEL:DEBUG}
+    root: ${MRKT_ROOT_LOGGING_ROOT:INFO}
+    com.github.nmicra: ${MRKT_LOGGING_LEVEL:DEBUG}
     io.r2dbc.postgresql.QUERY: DEBUG # for queries
     io.r2dbc.postgresql.PARAM: DEBUG # for parameters
 
 server:
   port: 8383
-
+# docker run --name mrktresearch -e POSTGRES_DB=mrktresearch -v %cd%/postgres_data:/var/lib/postgresql/data -e POSTGRES_USER=mcadmin -e POSTGRES_PASSWORD=mcadmin -p 5432:5432 -d postgres

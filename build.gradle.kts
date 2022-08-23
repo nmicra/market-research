@@ -41,6 +41,11 @@ dependencies {
 	implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.3.0")
 	implementation("commons-io:commons-io:2.11.0")
 
+	implementation ("org.tribuo:tribuo-all:4.2.1@pom") {
+//		transitive = true // for build.gradle (i.e., Groovy)
+		 isTransitive = true // for build.gradle.kts (i.e., Kotlin)
+	}
+
 	// tests
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.testcontainers:testcontainers:1.16.3")
